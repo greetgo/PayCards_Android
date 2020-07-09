@@ -95,6 +95,8 @@ public class CardDetailsActivity extends AppCompatActivity {
                 Card card = data.getParcelableExtra(ScanCardIntent.RESULT_PAYCARDS_CARD);
                 if (BuildConfig.DEBUG) Log.i(TAG, "Card info: " + card);
                 setCard(card);
+//                byte[] byteArray = data.getByteArrayExtra(ScanCardIntent.RESULT_CARD_IMAGE);
+//                Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
             } else if (resultCode == Activity.RESULT_CANCELED) {
                 @CancelReason final int reason;
                 if (data != null) {
