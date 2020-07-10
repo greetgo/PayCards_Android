@@ -163,17 +163,9 @@ public class ScanCardFragment extends Fragment {
                     }
 
                     Card card = new Card(result.getNumber(), result.getName(), date);
-//                    byte cardImage[] = mLastCardImage;
+                    byte cardImage[] = mLastCardImage;
                     mLastCardImage = null;
-
-                    byte[] cardImageByte = null;
-                    Bitmap cardImageBitMap = result.getCardImage();
-                    if (cardImageBitMap != null) {
-                        ByteArrayOutputStream blob = new ByteArrayOutputStream();
-                        cardImageBitMap.compress(Bitmap.CompressFormat.JPEG, 80, blob);
-                        cardImageByte = blob.toByteArray();
-                    }
-                    finishWithResult(card, cardImageByte);
+                    finishWithResult(card, cardImage);
                 }
             }
 
