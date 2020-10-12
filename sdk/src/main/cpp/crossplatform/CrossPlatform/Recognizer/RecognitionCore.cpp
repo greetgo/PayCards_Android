@@ -23,7 +23,7 @@
 #include "Utils.h"
 
 #define kDateRecognitionAttempts  5
-#define kNumberRecognitionAttempts  30
+#define kNumberRecognitionAttempts  5
 
 static int dateRecognitionAttemptsCount = 0;
 static int numberRecognitionAttemptsCount = 0;
