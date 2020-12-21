@@ -23,10 +23,11 @@ public final class RecognitionConstants {
     public static final int RECOGNIZER_MODE_DATE = 1 << 1;
     public static final int RECOGNIZER_MODE_NAME = 1 << 2;
     public static final int RECOGNIZER_MODE_GRAB_CARD_IMAGE = 1 << 3;
+    public static final int RECOGNIZER_MODE_CURRENCY = 1 << 4;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef(flag = true,
-            value = {RECOGNIZER_MODE_NUMBER, RECOGNIZER_MODE_DATE, RECOGNIZER_MODE_NAME, RECOGNIZER_MODE_GRAB_CARD_IMAGE})
+            value = {RECOGNIZER_MODE_NUMBER, RECOGNIZER_MODE_DATE, RECOGNIZER_MODE_NAME, RECOGNIZER_MODE_GRAB_CARD_IMAGE, RECOGNIZER_MODE_CURRENCY})
     public @interface RecognitionMode {}
 
 

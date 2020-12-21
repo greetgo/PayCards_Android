@@ -14,6 +14,7 @@ add_library(crossplatform STATIC
         CrossPlatform/Recognizer/EdgesDetector.cpp
         CrossPlatform/Recognizer/FrameStorage.cpp
         CrossPlatform/Recognizer/NameRecognizer.cpp
+        CrossPlatform/Recognizer/CurrencyRecognizer.cpp
         CrossPlatform/Recognizer/NumberRecognizer.cpp
         CrossPlatform/Recognizer/RecognitionCore.cpp
         CrossPlatform/Recognizer/RecognitionResult.cpp

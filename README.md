@@ -1,3 +1,6 @@
+sudo apt  install cmake
+sudo apt install ninja-build
+
 # PAY.CARDS RECOGNIZER
 
 Automatic recognition of bank card data using built-in camera on Android devices.

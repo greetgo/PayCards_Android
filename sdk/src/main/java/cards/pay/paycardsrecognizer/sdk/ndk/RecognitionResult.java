@@ -23,6 +23,12 @@ public final class RecognitionResult implements Parcelable {
     private final String nameRaw;
 
     @Nullable
+    private final String currency;
+
+    @Nullable
+    private final String currencyRaw;
+
+    @Nullable
     private final Rect numberImageRect;
 
     @Nullable
@@ -40,16 +46,20 @@ public final class RecognitionResult implements Parcelable {
 
     public RecognitionResult(@Nullable String number,
                              @Nullable String name,
+                             @Nullable String currency,
                              @Nullable String date,
                              @Nullable Rect numberImageRect,
                              @Nullable String nameRaw,
+                             @Nullable String currencyRaw,
                              @Nullable Bitmap cardImage,
                              boolean isFirst,
                              boolean isFinal) {
         this.number = number;
         this.name = name;
+        this.currency = currency;
         this.date = date;
         this.nameRaw = nameRaw;
+        this.currencyRaw = currencyRaw;
         this.cardImage = cardImage;
         this.numberImageRect = numberImageRect;
         this.isFirst = isFirst;
@@ -62,6 +72,8 @@ public final class RecognitionResult implements Parcelable {
         date = builder.date;
         name = builder.name;
         nameRaw = builder.nameRaw;
+        currency = builder.currency;
+        currencyRaw = builder.currencyRaw;
         numberImageRect = builder.numberImageRect;
         isFirst = builder.isFirst;
         isFinal = builder.isFinal;
@@ -89,6 +101,16 @@ public final class RecognitionResult implements Parcelable {
     @Nullable
     public String getNameRaw() {
         return nameRaw;
+    }
+
+    @Nullable
+    public String getCurrency() {
+        return currency;
+    }
+
+    @Nullable
+    public String getCurrencyRaw() {
+        return currencyRaw;
     }
 
     @Nullable
@@ -128,6 +150,8 @@ public final class RecognitionResult implements Parcelable {
         if (date != null ? !date.equals(that.date) : that.date != null) return false;
         if (name != null ? !name.equals(that.name) : that.name != null) return false;
         if (nameRaw != null ? !nameRaw.equals(that.nameRaw) : that.nameRaw != null) return false;
+        if (currency != null ? !currency.equals(that.currency) : that.currency != null) return false;
+        if (currencyRaw != null ? !currencyRaw.equals(that.currencyRaw) : that.currencyRaw != null) return false;
         if (numberImageRect != null ? !numberImageRect.equals(that.numberImageRect) : that.numberImageRect != null)
             return false;
         return cardImage != null ? cardImage.equals(that.cardImage) : that.cardImage == null;
@@ -139,6 +163,8 @@ public final class RecognitionResult implements Parcelable {
         result = 31 * result + (date != null ? date.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (nameRaw != null ? nameRaw.hashCode() : 0);
+        result = 31 * result + (currency != null ? currency.hashCode() : 0);
+        result = 31 * result + (currencyRaw != null ? currencyRaw.hashCode() : 0);
         result = 31 * result + (numberImageRect != null ? numberImageRect.hashCode() : 0);
         result = 31 * result + (cardImage != null ? cardImage.hashCode() : 0);
         result = 31 * result + (isFirst ? 1 : 0);
@@ -159,6 +185,8 @@ public final class RecognitionResult implements Parcelable {
         dest.writeString(this.date);
         dest.writeString(this.name);
         dest.writeString(this.nameRaw);
+        dest.writeString(this.currency);
+        dest.writeString(this.currencyRaw);
         dest.writeParcelable(this.numberImageRect, 0);
         dest.writeParcelable(this.cardImage, 0);
     }
@@ -170,6 +198,8 @@ public final class RecognitionResult implements Parcelable {
         this.date = in.readString();
         this.name = in.readString();
         this.nameRaw = in.readString();
+        this.currency = in.readString();
+        this.currencyRaw = in.readString();
         this.numberImageRect = in.readParcelable(Rect.class.getClassLoader());
         this.cardImage = in.readParcelable(Bitmap.class.getClassLoader());
     }
@@ -192,6 +222,8 @@ public final class RecognitionResult implements Parcelable {
         private String date;
         private String name;
         private String nameRaw;
+        private String currency;
+        private String currencyRaw;
         private Rect numberImageRect;
 
         public Builder() {
@@ -205,6 +237,8 @@ public final class RecognitionResult implements Parcelable {
             this.date = copy.date;
             this.name = copy.name;
             this.nameRaw = copy.nameRaw;
+            this.currency = copy.currency;
+            this.currencyRaw = copy.currencyRaw;
             this.numberImageRect = copy.numberImageRect;
         }
 
@@ -230,6 +264,16 @@ public final class RecognitionResult implements Parcelable {
 
         public Builder setNameRaw(String val) {
             nameRaw = val;
+            return this;
+        }
+
+        public Builder setCurrency(String val) {
+            currency = val;
+            return this;
+        }
+
+        public Builder setCurrencyRaw(String val) {
+            currencyRaw = val;
             return this;
         }
 

@@ -49,6 +49,7 @@ public class CardDetectionStateView extends View {
     private volatile String mRecognitionResultDate;
     private volatile String mRecognitionResultCardNumber;
     private volatile String mRecognitionResultHolder;
+    private volatile String mRecognitionResultCurrency;
 
     private CardRectCoordsMapper mCardFrame;
 
@@ -76,7 +77,7 @@ public class CardDetectionStateView extends View {
 
     private Paint mBackgroundPaint;
 
-    private Paint mCardNumberPaint, mCardDatePaint, mCardHolderPaint;
+    private Paint mCardNumberPaint, mCardDatePaint, mCardHolderPaint, mCardCurrencyPaint;
 
     public CardDetectionStateView(Context context) {
         this(context, null);
@@ -116,12 +117,14 @@ public class CardDetectionStateView extends View {
         mCardNumberPaint = createCardTextPaint();
         mCardDatePaint = createCardTextPaint();
         mCardHolderPaint = createCardTextPaint();
+        mCardCurrencyPaint = createCardTextPaint();
 
         if (isInEditMode()) {
             mDetectionState = TOP_EDGE | BOTTOM_EDGE | LEFT_EDGE | RIGHT_EDGE;
             mRecognitionResultCardNumber = CardUtils.prettyPrintCardNumber("1234567890123456");
             mRecognitionResultDate = "05/18";
             mRecognitionResultHolder = "CARDHOLDER NAME";
+            mRecognitionResultCurrency = "MULTI CURRENCY";
         }
     }
 
@@ -227,6 +230,7 @@ public class CardDetectionStateView extends View {
         final String resultDate = mRecognitionResultDate;
         final String resultNumber = mRecognitionResultCardNumber;
         final String resultHolder = mRecognitionResultHolder;
+        final String resultCurrency = mRecognitionResultCurrency;
 
         if (!TextUtils.isEmpty(resultNumber)) {
             canvas.drawText(resultNumber,
@@ -247,6 +251,13 @@ public class CardDetectionStateView extends View {
                     mCardFrame.getCardHolderPos().x,
                     mCardFrame.getCardHolderPos().y,
                     mCardHolderPaint);
+        }
+
+        if (!TextUtils.isEmpty(resultCurrency)) {
+            canvas.drawText(resultCurrency,
+              mCardFrame.getCardCurrencyPos().x,
+              mCardFrame.getCardCurrencyPos().y,
+              mCardCurrencyPaint);
         }
     }
 
@@ -311,6 +322,7 @@ public class CardDetectionStateView extends View {
         mCardNumberPaint.setTextSize(mCardFrame.getCardNumberFontSize());
         mCardDatePaint.setTextSize(mCardFrame.getCardDateFontSize());
         mCardHolderPaint.setTextSize(mCardFrame.getCardHolderFontSize());
+        mCardCurrencyPaint.setTextSize(mCardFrame.getCardCurrencyFontSize());
     }
 
     public synchronized void setDetectionState(final int detectionState) {
@@ -340,6 +352,8 @@ public class CardDetectionStateView extends View {
         }
 
         mRecognitionResultHolder = result.getName();
+
+        mRecognitionResultCurrency = result.getCurrency();
 
         postInvalidate(mCardRectInvalidation.left,
                 mCardRectInvalidation.top,

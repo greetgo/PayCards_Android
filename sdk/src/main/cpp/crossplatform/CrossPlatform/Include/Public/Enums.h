@@ -22,7 +22,8 @@ typedef enum PayCardsRecognizerMode {
     PayCardsRecognizerModeNumber = 1,
     PayCardsRecognizerModeDate = 2,
     PayCardsRecognizerModeName = 4,
-    PayCardsRecognizerModeGrabCardImage = 8
+    PayCardsRecognizerModeGrabCardImage = 8,
+    PayCardsRecognizerModeCurrency = 16,
 } PayCardsRecognizerMode;
 
 

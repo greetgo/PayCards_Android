@@ -23,11 +23,15 @@ class CardRectCoordsMapper {
 
     private static final PointF DEFAULT_CARD_HOLDER_POS = new PointF(33f,364f);
 
+    private static final PointF DEFAULT_CARD_CURRENCY_POS = new PointF(33f,394f);
+
     private static final float DEFAULT_CARD_NUMBER_FONT_SIZE = 40;
 
     private static final float DEFAULT_CARD_DATE_FONT_SIZE = 27;
 
     private static final float DEFAULT_CARD_HOLDER_FONT_SIZE = 27;
+
+    private static final float DEFAULT_CARD_CURRENCY_FONT_SIZE = 27;
 
     private static final boolean DBG = BuildConfig.DEBUG;
 
@@ -60,6 +64,8 @@ class CardRectCoordsMapper {
     private final PointF mCardDatePos = new PointF();
 
     private final PointF mCardHolderPos = new PointF();
+
+    private final PointF mCardCurrencyPos = new PointF();
 
     private int mViewWidth = 1280;
 
@@ -101,9 +107,19 @@ class CardRectCoordsMapper {
         return mCardHolderPos;
     }
 
+    public PointF getCardCurrencyPos() {
+        return mCardCurrencyPos;
+    }
+
     public float getCardHolderFontSize() {
         return DEFAULT_CARD_HOLDER_FONT_SIZE * mScale;
     }
+
+    public float getCardCurrencyFontSize() {
+        return DEFAULT_CARD_CURRENCY_FONT_SIZE * mScale;
+    }
+
+
 
     public boolean setViewSize(int width, int height) {
         if (width != 0
@@ -199,6 +215,7 @@ class CardRectCoordsMapper {
         mapToViewCoordinates(DEFAULT_CARD_NUMBER_POS, mCardNumberPos);
         mapToViewCoordinates(DEFAULT_CARD_DATE_POS, mCardDatePos);
         mapToViewCoordinates(DEFAULT_CARD_HOLDER_POS, mCardHolderPos);
+        mapToViewCoordinates(DEFAULT_CARD_CURRENCY_POS, mCardCurrencyPos);
     }
 
     public void mapToViewCoordinates(PointF src, PointF dst) {

@@ -11,47 +11,70 @@
 
 #include "IRecognitionResult.h"
 
-class CRecognitionResult : public IRecognitionResult
-{
-    
+class CRecognitionResult : public IRecognitionResult {
+
 public:
     CRecognitionResult();
-    
+
     virtual ~CRecognitionResult();
-    
+
 public:
-    
+
     virtual void Reset();
-    
+
     virtual shared_ptr<INeuralNetworkResultList> GetNumberResult() const;
+
     virtual shared_ptr<INeuralNetworkResultList> GetDateResult() const;
+
     virtual shared_ptr<INeuralNetworkResultList> GetNameResult() const;
+
+    virtual shared_ptr<INeuralNetworkResultList> GetCurrencyResult() const;
+
     virtual RecognitionStatus GetRecognitionStatus() const;
+
     virtual cv::Mat GetCardImage() const;
+
     virtual cv::Rect GetNumberRect() const;
+
     virtual cv::Rect GetDateRect() const;
+
     virtual std::string GetPostprocessedName() const;
-    
+
+    virtual std::string GetPostprocessedCurrency() const;
+
     virtual void SetNumberResult(shared_ptr<INeuralNetworkResultList> result);
+
     virtual void SetDateResult(shared_ptr<INeuralNetworkResultList> result);
+
     virtual void SetNameResult(shared_ptr<INeuralNetworkResultList> result);
+
+    virtual void SetCurrencyResult(shared_ptr<INeuralNetworkResultList> result);
+
     virtual void SetRecognitionStatus(RecognitionStatus status);
+
     virtual void SetCardImage(cv::Mat cardImage);
+
     virtual void SetNumberRect(cv::Rect numberRect);
+
     virtual void SetDateRect(cv::Rect dateRect);
+
     virtual void SetPostprocessedName(std::string name);
-        
+
+    virtual void SetPostprocessedCurrency(std::string currency);
+
 private:
-    
+
     shared_ptr<INeuralNetworkResultList> _numberResult;
     shared_ptr<INeuralNetworkResultList> _dateResult;
     shared_ptr<INeuralNetworkResultList> _nameResult;
+    shared_ptr<INeuralNetworkResultList> _currencyResult;
     RecognitionStatus _recognitionStatus;
     cv::Mat _cardImage;
     cv::Rect _numberRect;
     cv::Rect _dateRect;
 
     std::string _postprocessedName;
+    std::string _postprocessedCurrency;
 };
 
 

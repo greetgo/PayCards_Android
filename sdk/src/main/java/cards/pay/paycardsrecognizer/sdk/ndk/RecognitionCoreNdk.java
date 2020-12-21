@@ -190,7 +190,7 @@ final class RecognitionCoreNdk implements RecognitionCoreImpl {
     private static void onRecognitionResultReceived(
             boolean isFirst,
             boolean isFinal,
-            String number, String date, String name, String nameRaw,
+            String number, String date, String name, String nameRaw, String currency, String currencyRaw,
                                                     Bitmap cardImage,
                                                     int numberRectX, int numberRectY, int numberRectWidth, int numberRectHeight
     ) {
@@ -209,8 +209,10 @@ final class RecognitionCoreNdk implements RecognitionCoreImpl {
                 .setIsFinal(isFinal)
                 .setNumber(number)
                 .setName(name)
+                .setCurrency(currency)
                 .setDate(date)
                 .setNameRaw(nameRaw)
+                .setCurrencyRaw(currencyRaw)
                 .setNumberImageRect(numberRect)
                 .setCardImage(cardImage)
                 .build();

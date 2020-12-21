@@ -30,22 +30,22 @@ using namespace std;
 class IRecognitionCore
 {
 public:
-    
+
     virtual ~IRecognitionCore() {}
-    
+
 public:
-    
+
     static bool GetInstance(shared_ptr<IRecognitionCore> &recognitionCore,
                             const shared_ptr<IRecognitionCoreDelegate>& recognitionDelegate,
                             const shared_ptr<ITorchDelegate>& torchDelegate);
-    
+
     virtual void SetRecognitionMode(PayCardsRecognizerMode flag) = 0;
-    
+
     virtual void Deploy() = 0;
-    
+
     virtual void SetPathNumberRecognitionModel(const string& path) = 0;
     virtual void SetPathNumberRecognitionStruct(const string& path) = 0;
-    
+
     virtual void SetPathNumberLocalizationXModel(const string& path) = 0;
     virtual void SetPathNumberLocalizationXStruct(const string& path) = 0;
 
@@ -62,28 +62,38 @@ public:
     virtual void SetPathDateLocalization1Struct(const string& path) = 0;
 
     virtual void SetPathDateLocalizationViola(const string& path) = 0;
-    
+
     virtual void SetPathNameYLocalizationViola(const string& path) = 0;
-    
+
     virtual void SetPathNameLocalizationXModel(const string& path) = 0;
     virtual void SetPathNameLocalizationXStruct(const string& path) = 0;
 
     virtual void SetPathNameSpaceCharModel(const string& path) = 0;
     virtual void SetPathNameSpaceCharStruct(const string& path) = 0;
-    
+
     virtual void SetPathNameListTxt(const string& path) = 0;
-    
+
+    virtual void SetPathCurrencyYLocalizationViola(const string& path) = 0;
+
+    virtual void SetPathCurrencyLocalizationXModel(const string& path) = 0;
+    virtual void SetPathCurrencyLocalizationXStruct(const string& path) = 0;
+
+    virtual void SetPathCurrencySpaceCharModel(const string& path) = 0;
+    virtual void SetPathCurrencySpaceCharStruct(const string& path) = 0;
+
+    virtual void SetPathCurrencyListTxt(const string& path) = 0;
+
     virtual void SetOrientation(PayCardsRecognizerOrientation orientation) = 0;
-    
+
 
     virtual bool IsIdle() const = 0;
     virtual void SetIdle(bool isIdle) = 0;
     virtual void ResetResult() = 0;
-    
+
     virtual void SetTorchStatus(bool status) = 0;
-    
+
     virtual cv::Rect CalcWorkingArea(cv::Size frameSize, int captureAreaWidth) = 0;
-    
+
     virtual void ProcessFrame(DetectedLineFlags& edgeFlags, void* bufferY, void* bufferUV, size_t bufferSizeY, size_t bufferSizeUV) = 0;
 };
 
