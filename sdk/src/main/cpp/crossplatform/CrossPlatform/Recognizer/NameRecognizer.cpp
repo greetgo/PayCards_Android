@@ -18,7 +18,7 @@
 using namespace std;
 using namespace cv;
 
-static const cv::Rect nameWindowRect(25,325,494,80);
+static const cv::Rect nameWindowRect(10,325,500,90);
 static const cv::Size charSize(20,29);
 
 static const std::vector<string> alphabet = {" ","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};

@@ -22,8 +22,8 @@
 
 #include "Utils.h"
 
-#define kDateRecognitionAttempts  5
-#define kNumberRecognitionAttempts  5
+#define kDateRecognitionAttempts  3
+#define kNumberRecognitionAttempts  3
 
 static int dateRecognitionAttemptsCount = 0;
 static int numberRecognitionAttemptsCount = 0;
@@ -98,12 +98,12 @@ void CRecognitionCore::Deploy()
         dateRecognizer->SetDelegate(_delegate);
         if(!dateRecognizer->Deploy()) return;
     }
-    
+
     if (auto nameRecognizer = _nameRecognizer.lock()) {
         nameRecognizer->SetDelegate(_delegate);
         if(!nameRecognizer->Deploy()) return;
     }
-    
+
     _deployed = true;
 }
 
@@ -117,7 +117,7 @@ cv::Rect CRecognitionCore::CalcWorkingArea(cv::Size frameSize, int captureAreaWi
     if(auto edgesDetector = _edgesDetector.lock()) {
         return edgesDetector->CalcWorkingArea(frameSize, captureAreaWidth, _orientation);
     }
-    
+
     return Rect(0,0,0,0);
 }
 
@@ -131,7 +131,7 @@ void CRecognitionCore::SetIdle(bool isIdle)
             recognitionResult->Reset();
         }
     }
-    
+
     _isIdle.store(isIdle);
 }
 
@@ -289,7 +289,7 @@ void CRecognitionCore::ProcessFrame(DetectedLineFlags& edgeFlags, void* bufferY,
     if (!IsIdle() && _deployed) {
 
         Mat frameMatY = cv::Mat(1280, 720, CV_8UC1, bufferY); //put buffer in open cv, no memory copied
-        
+
         if(auto edgesDetector = _edgesDetector.lock()) {
             if(auto recognitionResult = _recognitionResult.lock()) {
                 if(auto frameStorage = _frameStorage.lock()) {
@@ -305,16 +305,16 @@ void CRecognitionCore::ProcessFrame(DetectedLineFlags& edgeFlags, void* bufferY,
                                 frameStorage->SetRawY(frameMatY.data, bufferUV, _edges, _orientation);
                             }
                             bordersFrame.copyTo(_currentFrame);
-                            
+
                             std::thread thread;
                             thread = std::thread( [this] { this->ProcessFrameThreaded(); } );
-                            
+
                             sched_param sch;
                             int policy;
                             pthread_getschedparam(thread.native_handle(), &policy, &sch);
                             sch.sched_priority = 99;
                             pthread_setschedparam(thread.native_handle(), SCHED_FIFO, &sch);
-                            
+
                             thread.detach();
                         }
                     }
@@ -351,7 +351,7 @@ void CRecognitionCore::ProcessFrameThreaded()
 void CRecognitionCore::Recognize()
 {
     if (auto recognitionResult = _recognitionResult.lock()) {
-        
+
         // number
         if (_mode&PayCardsRecognizerModeNumber &&
             !(recognitionResult->GetRecognitionStatus()&RecognitionStatusNumber) &&
@@ -361,7 +361,7 @@ void CRecognitionCore::Recognize()
                 return;
             }
         }
-        
+
         // date
         if (_mode&PayCardsRecognizerModeDate &&
             !(recognitionResult->GetRecognitionStatus() & RecognitionStatusDate) &&
@@ -380,10 +380,10 @@ void CRecognitionCore::Recognize()
                 return;
             }
         }
-        
+
         if (_mode&PayCardsRecognizerModeDate || _mode&PayCardsRecognizerModeNumber) {
             _delegate->RecognitionDidFinish(recognitionResult, (PayCardsRecognizerMode)(PayCardsRecognizerModeNumber|PayCardsRecognizerModeDate));
-            
+
             if(_mode&PayCardsRecognizerModeGrabCardImage) {
                 auto cardMat = CaptureView();
                 if(!cardMat.empty()) {
@@ -391,9 +391,9 @@ void CRecognitionCore::Recognize()
                 }
             }
         }
-        
+
         _delegate->RecognitionDidFinish(recognitionResult, PayCardsRecognizerModeName);
-        
+
         _isIdle.store(true);
         FinishRecognition();
         dateRecognitionAttemptsCount = 0;
@@ -405,25 +405,26 @@ void CRecognitionCore::Recognize()
 bool CRecognitionCore::RecognizeName()
 {
     shared_ptr<INeuralNetworkResultList> result;
-    
+
     if(auto frameStorage = _frameStorage.lock()) {
         if(auto nameRecognizer = _nameRecognizer.lock()) {
             if(auto recognitionResult = _recognitionResult.lock()) {
                 Mat frame;
                 frameStorage->GetCurrentFrame(frame);
-                
+
                 vector<cv::Mat> samples;
                 std::string postprocessedName = "";
                 result = nameRecognizer->Process(frame, samples, postprocessedName);
-                
+
                 if (result) {
                     recognitionResult->SetNameResult(result);
                     recognitionResult->SetPostprocessedName(postprocessedName);
+                    recognitionResult->SetRecognitionStatus(RecognitionStatusName);
                 }
             }
         }
     }
-    
+
     return result != nullptr;
 }
 
@@ -431,7 +432,7 @@ bool CRecognitionCore::RecognizeNumber()
 {
     cv::Rect boundingRect;
     shared_ptr<INeuralNetworkResultList> result;
-    
+
     if(auto frameStorage = _frameStorage.lock()) {
         if(auto numberRecognizer = _numberRecognizer.lock()) {
             if(auto recognitionResult = _recognitionResult.lock()) {
@@ -444,6 +445,7 @@ bool CRecognitionCore::RecognizeNumber()
                     recognitionResult->SetNumberResult(result);
                     recognitionResult->SetNumberRect(boundingRect);
                     recognitionResult->SetCardImage(frame.clone());
+                    recognitionResult->SetRecognitionStatus(RecognitionStatusNumber);
                 }
                 if(auto torchManager = _torchManager.lock()) {
                     torchManager->IncrementCounter();
@@ -464,20 +466,20 @@ bool CRecognitionCore::RecognizeDate()
             if(auto recognitionResult = _recognitionResult.lock()) {
                 Mat frame;
                 frameStorage->GetCurrentFrame(frame);
-                
+
                 vector<cv::Mat> samples;
                 result = dateRecognizer->Process(frame, samples, boundingRect);
-                
+
                 dateRecognitionAttemptsCount++;
                 if (result) {
-                    _isIdle.store(true);
                     recognitionResult->SetDateResult(result);
                     recognitionResult->SetDateRect(boundingRect);
+                    recognitionResult->SetRecognitionStatus(RecognitionStatusDate);
                 }
             }
         }
     }
-    
+
     return result != nullptr;
 }
 
@@ -492,15 +494,15 @@ void CRecognitionCore::SetTorchStatus(bool status)
 cv::Mat CRecognitionCore::CaptureView()
 {
     Mat normalizedMat;
-    
+
     if(auto frameStorage = _frameStorage.lock()) {
         if(auto edgesDetector = _edgesDetector.lock()) {
             size_t bufferLen = 720 * 1280 * 3 / 2 ;
             uint8_t *uPlane, *vPlane;
             void* imgBuffer = malloc(bufferLen);
-            
+
             memcpy(imgBuffer, frameStorage->GetYMat(), _bufferSizeY);
-            
+
             size_t planeWidth = 360;
             size_t planeHeight = 640;
             uint8_t *planeBaseAddress = (uint8_t *)frameStorage->GetUVMat();
@@ -509,7 +511,7 @@ cv::Mat CRecognitionCore::CaptureView()
             // Convert Y'UV420sp to Y'UV420p
             uPlane = (uint8_t *)malloc(planeSize);
             vPlane = (uint8_t *)malloc(planeSize);
-            
+
             for (uint32_t i = 0; i < (planeWidth * planeHeight / 4); i++) {
                 uint8_t *uvSrc = &planeBaseAddress[i * 8];
                 uint8_t *uDest = &uPlane[i * 4];
@@ -523,38 +525,38 @@ cv::Mat CRecognitionCore::CaptureView()
             uPlane = planeBaseAddress;
             vPlane = &planeBaseAddress[planeSize];
 #endif
-            
+
             memcpy(((unsigned char *)imgBuffer) + _bufferSizeY, uPlane, planeSize);
             memcpy(((unsigned char *)imgBuffer) + _bufferSizeY + planeSize, vPlane, planeSize);
-            
+
             Mat yuv = Mat(1280 + 1280/2, 720, CV_8UC1, imgBuffer);
-            
+
             Mat rgb;
             cvtColor(yuv, rgb, CV_YUV2RGB_I420);
-            
-            
+
+
             Mat refinedMat = rgb(edgesDetector->GetInternalWindowRect());
-            
+
             vector<ParametricLine> lines = frameStorage->GetEdges();
             frameStorage->NormalizeMatrix(refinedMat, lines, normalizedMat);
-            
+
 #ifdef __APPLE__
             free(uPlane);
             free(vPlane);
 #endif
             free(imgBuffer);
-            
+
             PayCardsRecognizerOrientation orientation = frameStorage->GetYUVOrientation();
-            
+
             if (orientation != PayCardsRecognizerOrientationPortraitUpsideDown &&
                 orientation != PayCardsRecognizerOrientationPortrait) {
-                
+
                 CUtils::RotateMatrix90n(normalizedMat, normalizedMat, 90);
             }
-            
+
             cv::resize(normalizedMat, normalizedMat, cv::Size(660,416));
         }
     }
-    
+
     return normalizedMat;
 }
