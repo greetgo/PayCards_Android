@@ -21,7 +21,7 @@ public:
     ~CRecognitionCoreDelegate() {};
     
 public:
-    
+
     CRecognitionCoreDelegate( void* platformDelegate );
 
     void RecognitionDidFinish(const shared_ptr<IRecognitionResult>& result, PayCardsRecognizerMode resultFlags);

@@ -22,8 +22,8 @@
 
 #include "Utils.h"
 
-#define kDateRecognitionAttempts  3
-#define kNumberRecognitionAttempts  3
+#define kDateRecognitionAttempts 2
+#define kNumberRecognitionAttempts 2
 
 static int dateRecognitionAttemptsCount = 0;
 static int numberRecognitionAttemptsCount = 0;
@@ -352,25 +352,7 @@ void CRecognitionCore::Recognize()
 {
     if (auto recognitionResult = _recognitionResult.lock()) {
 
-        // number
-        if (_mode&PayCardsRecognizerModeNumber &&
-            !(recognitionResult->GetRecognitionStatus()&RecognitionStatusNumber) &&
-            numberRecognitionAttemptsCount < kNumberRecognitionAttempts) {
-            if (!RecognizeNumber()) {
-                FinishRecognition();
-                return;
-            }
-        }
 
-        // date
-        if (_mode&PayCardsRecognizerModeDate &&
-            !(recognitionResult->GetRecognitionStatus() & RecognitionStatusDate) &&
-            dateRecognitionAttemptsCount < kDateRecognitionAttempts) {
-            if (!RecognizeDate()) {
-                FinishRecognition();
-                return;
-            }
-        }
 
         // name
         if (_mode&PayCardsRecognizerModeName &&
@@ -380,6 +362,28 @@ void CRecognitionCore::Recognize()
                 return;
             }
         }
+
+        // date
+        if (_mode&PayCardsRecognizerModeDate &&
+            !(recognitionResult->GetRecognitionStatus() & RecognitionStatusDate) &&
+            dateRecognitionAttemptsCount < kDateRecognitionAttempts && recognitionResult->GetNameResult() != nullptr
+            && recognitionResult->GetNumberResult() != nullptr ) {
+            if (!RecognizeDate()) {
+                FinishRecognition();
+                return;
+            }
+        }
+
+        // number
+        if (_mode&PayCardsRecognizerModeNumber &&
+            !(recognitionResult->GetRecognitionStatus()&RecognitionStatusNumber) &&
+            numberRecognitionAttemptsCount < kNumberRecognitionAttempts && recognitionResult->GetNameResult() != nullptr) {
+            if (!RecognizeNumber()) {
+                FinishRecognition();
+                return;
+            }
+        }
+
 
         if (_mode&PayCardsRecognizerModeDate || _mode&PayCardsRecognizerModeNumber) {
             _delegate->RecognitionDidFinish(recognitionResult, (PayCardsRecognizerMode)(PayCardsRecognizerModeNumber|PayCardsRecognizerModeDate));
